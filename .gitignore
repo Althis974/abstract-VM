@@ -18,6 +18,8 @@ build/
 
 # random files
 
+test.avm
+
 # valgrind files
 
 *.dSYM/
