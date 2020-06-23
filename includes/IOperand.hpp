@@ -8,6 +8,9 @@
 #include <string>
 #include <iostream>
 
+int     ft_atoi(const std::string &);
+double  ft_atof(const std::string &);
+
 enum eOperandType
 {
 	INT8,
