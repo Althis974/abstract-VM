@@ -12,7 +12,7 @@
 
 NAME		=	avm
 HEADER		=	./includes/
-FILENAMES	=	main.cpp Lexer.cpp Exception.cpp Computer.cpp
+FILENAMES	=	main.cpp Parser.cpp Lexer.cpp Exception.cpp Computer.cpp
 
 SOURCES		=	$(addprefix srcs/, $(FILENAMES))
 OBJECTS		=	$(addprefix build/, $(FILENAMES:.cpp=.o))
