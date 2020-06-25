@@ -19,6 +19,7 @@ build/
 # random files
 
 *.avm
+unistd.h
 
 # valgrind files
 
