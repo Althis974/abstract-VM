@@ -10,51 +10,20 @@
 #include <sstream>
 #include "IOperand.hpp"
 #include "Exception.hpp"
-
-typedef struct			s_operand
-{
-	eOperandType		type;
-	std::string			name;
-	int					precision;
-	long				min;
-	long				max;
-}						t_operand;
-
-static t_operand 		operands[] =
-{
-		{INT8, "int8", 0 , -128, 127},
-		{INT16, "int16", 1, -32768, 32767},
-		{INT32, "int32", 2, -2147483648, 2147483647},
-		{FLOAT, "float", 3, -32768, 32767},
-		{DOUBLE, "double", 4, -2147483648, 2147483647},
-};
+#include "Computer.hpp"
 
 template <typename T>
-class 	Operand : public IOperand
+class Operand : public IOperand
 {
 
 public:
 
 		// Constructors
-		explicit Operand()
+		Operand(const eOperandType type, const T value) : _type(type),
+				_value(value)
 		{
-			this->_value = static_cast<T>(0);
-		}
 
-		explicit Operand(eOperandType type, const double &value)
-		{
-			this->_type = type;
-			if (value < operands[type].max)
-			{
-				if (value > operands[type].min)
-					this->_precision = operands[type].precision;
-				else
-					throw Exception("Underflow.");
-			}
-			else
-				throw Exception("Overflow.");
-			this->_value = value;
-		}
+		};
 
 		// Copy constructor
 		Operand(const Operand &src) = default;
@@ -65,183 +34,272 @@ public:
 		// Assignation operator overload
 		Operand & operator=(const Operand &rhs) = default;
 
-		virtual std::string const &	toString() const
+		// Getters
+		eOperandType getType() const
 		{
-			std::string *s = new std::string();
-			std::ostringstream oStringStream;
+			return (this->_type);
+		};
+
+		int getPrecision() const
+		{
+			return (this->_type);
+		};
+
+		T getValue() const
+		{
+			return (this->_value);
+		};
+
+		// Explicit
+		std::string const & 	toString() const
+		{
+
+			std::ostringstream	oStringStream;
 
 			if (this->_type == INT8)
 				oStringStream << static_cast<int>(this->_value);
 			else
 				oStringStream << this->_value;
-			s->append(oStringStream.str());
 
-			return (*s);
-		}
+			return (*new std::string(oStringStream.str()));
+		};
 
-		// Getters
-		virtual int					getPrecision() const
+		// Arithmetic operators overload
+		IOperand const * 		operator+(const IOperand &rhs) const
 		{
-			return (this->_precision);
-		}
+			int					i = 0;
+			double 				d = 0;
+			eOperandType 		type;
+			const Operand<T> *	op = NULL;
 
-		virtual eOperandType		getType() const
-		{
-			return (this->_type);
-		}
-
-		virtual T					getValue() const
-		{
-			return (this->_value);
-		}
-
-		virtual IOperand *			operator+(const IOperand &rhs) const
-		{
-			IOperand		*operand = NULL;
-			eOperandType	type;
-
-			type = this->_precision >= rhs.getPrecision() ? this->_type : rhs.getType();
-			switch (type)
+			if (this->_type == rhs.getPrecision())
 			{
-				case INT8:
-					operand = new Operand<char>(type, this->_value + ft_atof(rhs.toString()));
-					break;
-				case INT16:
-					operand = new Operand<short>(type, this->_value + ft_atof(rhs.toString()));
-					break;
-				case INT32:
-					operand = new Operand<int>(type, this->_value + ft_atof(rhs.toString()));
-					break;
-				case FLOAT:
-					operand = new Operand<float>(type, this->_value + ft_atof(rhs.toString()));
-					break;
-				case DOUBLE:
-					operand = new Operand<double>(type, this->_value + ft_atof(rhs.toString()));
-					break;
+				op = static_cast<const Operand<T> *>(&rhs);
+
+				return (new Operand<T>(this->_type, op->getValue() + this->_value));
+			}
+			else
+			{
+				if (this->_type > rhs.getPrecision())
+					type = _type;
+				else
+					type = rhs.getType();
+
+				switch (type)
+				{
+					case INT8:
+					case INT16:
+					case INT32:
+						i = std::stoi(rhs.toString()) + this->_value;
+						break ;
+
+					case FLOAT:
+					case DOUBLE:
+						d = std::stod(rhs.toString()) + this->_value;
+						break ;
+
+					case UNKNOWN:
+						break ;
+				}
+
+			return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (operand);
+			return (NULL);
 		}
 
-		virtual IOperand *			operator-(const IOperand &rhs) const
+		IOperand const * 		operator-(const IOperand &rhs) const
 		{
-			IOperand		*operand = NULL;
-			eOperandType	type;
+			int					i = 0;
+			double 				d = 0;
+			eOperandType 		type;
+			const Operand<T> *	op = NULL;
 
-			type = this->_precision >= rhs.getPrecision() ? this->_type : rhs.getType();
-			switch (type)
+			if (this->_type == rhs.getPrecision())
 			{
-				case INT8:
-					operand = new Operand<char>(type, this->_value - ft_atof(rhs.toString()));
-					break;
-				case INT16:
-					operand = new Operand<short>(type, this->_value - ft_atof(rhs.toString()));
-					break;
-				case INT32:
-					operand = new Operand<int>(type, this->_value - ft_atof(rhs.toString()));
-					break;
-				case FLOAT:
-					operand = new Operand<float>(type, this->_value - ft_atof(rhs.toString()));
-					break;
-				case DOUBLE:
-					operand = new Operand<double>(type, this->_value - ft_atof(rhs.toString()));
-					break;
+				op = static_cast<const Operand<T> *>(&rhs);
+
+				return (new Operand<T>(this->_type, op->getValue() - this->_value));
 			}
 
-			return (operand);
-		}
-
-		virtual IOperand *			operator*(const IOperand &rhs) const
-		{
-			IOperand		*operand = NULL;
-			eOperandType	type;
-
-			type = this->_precision >= rhs.getPrecision() ? this->_type : rhs.getType();
-			switch (type)
+			else
 			{
-				case INT8:
-					operand = new Operand<char>(type, this->_value * ft_atof(rhs.toString()));
-					break;
-				case INT16:
-					operand = new Operand<short>(type, this->_value * ft_atof(rhs.toString()));
-					break;
-				case INT32:
-					operand = new Operand<int>(type, this->_value * ft_atof(rhs.toString()));
-					break;
-				case FLOAT:
-					operand = new Operand<float>(type, this->_value * ft_atof(rhs.toString()));
-					break;
-				case DOUBLE:
-					operand = new Operand<double>(type, this->_value * ft_atof(rhs.toString()));
-					break;
+				if (this->_type > rhs.getPrecision())
+					type = this->_type;
+				else
+					type = rhs.getType();
+
+				switch (type)
+				{
+					case INT8:
+					case INT16:
+					case INT32:
+						i = std::stoi(rhs.toString()) - this->_value;
+						break ;
+
+					case FLOAT:
+					case DOUBLE:
+						d = std::stod(rhs.toString()) - this->_value;
+						break ;
+
+					case UNKNOWN:
+						break ;
+				}
+
+				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (operand);
+			return (NULL);
 		}
 
-		virtual IOperand *			operator/(const IOperand &rhs) const
+		IOperand const *		operator*(const IOperand &rhs) const
 		{
-			IOperand		*operand = NULL;
-			eOperandType	type;
-			const Operand	&tmp = static_cast<const Operand &>(rhs);
+			int					i = 0;
+			double 				d = 0;
+			eOperandType 		type;
+			const Operand<T> *	op = NULL;
 
-			if (!ft_atof(tmp.toString()))
-				throw Exception("Division by zero.");
-
-			type = this->_precision >= rhs.getPrecision() ? this->_type : rhs.getType();
-			switch (type)
+			if (this->_type == rhs.getPrecision())
 			{
-				case INT8:
-					operand = new Operand<char>(type, this->_value / ft_atof(rhs.toString()));
-					break;
-				case INT16:
-					operand = new Operand<short>(type, this->_value / ft_atof(rhs.toString()));
-					break;
-				case INT32:
-					operand = new Operand<int>(type, this->_value / ft_atof(rhs.toString()));
-					break;
-				case FLOAT:
-					operand = new Operand<float>(type, this->_value / ft_atof(rhs.toString()));
-					break;
-				case DOUBLE:
-					operand = new Operand<double>(type, this->_value / ft_atof(rhs.toString()));
-					break;
+				op = static_cast<const Operand<T> *>(&rhs);
+
+				return (new Operand<T>(this->_type, op->getValue() * this->_value));
+			}
+			else
+			{
+				if (this->_type > rhs.getPrecision())
+					type = this->_type;
+				else
+					type = rhs.getType();
+
+				switch (type)
+				{
+					case INT8:
+					case INT16:
+					case INT32:
+						i = std::stoi(rhs.toString()) * this->_value;
+						break ;
+
+					case FLOAT:
+					case DOUBLE:
+						d = std::stod(rhs.toString()) * this->_value;
+						break ;
+
+					case UNKNOWN:
+						break ;
+				}
+
+				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (operand);
+			return (NULL);
 		}
 
-		virtual IOperand *			operator%(const IOperand &rhs) const
+		IOperand const *		operator/(const IOperand &rhs) const
 		{
-			IOperand		*operand = NULL;
-			eOperandType	type;
-			const Operand	&tmp = static_cast<const Operand &>(rhs);
+			int					i = 0;
+			double 				d = 0;
+			eOperandType 		type;
+			const Operand<T> *	op = NULL;
 
-			if (!ft_atof(tmp.toString()))
-				throw Exception("Modulo by zero.");
+			if (this->_type == rhs.getPrecision())
+			{
+				op = static_cast<const Operand<T> *>(&rhs);
 
-			type = this->_precision >= rhs.getPrecision() ? this->_type : rhs.getType();
-			if (this->_type == FLOAT || rhs.getType() == FLOAT)
-				throw Exception("Modulo with float.");
-			else if (this->_type == DOUBLE || rhs.getType() == DOUBLE)
-				throw Exception("Modulo with double.");
-			operand = new Operand(type, static_cast<int>(this->_value) % ft_atoi(tmp.toString()));
+				if (!this->_value)
+					throw Exception::FloatingPointException();
 
-			return (operand);
+				return (new Operand<T>(this->_type, op->getValue() / this->_value));
+			}
+			else
+			{
+				if (!this->_value)
+					throw Exception::FloatingPointException();
+
+				if (this->_type > rhs.getPrecision())
+					type = this->_type;
+				else
+					type = rhs.getType();
+
+				switch (type)
+				{
+					case INT8:
+					case INT16:
+					case INT32:
+						i = std::stoi(rhs.toString()) / this->_value;
+						break ;
+
+					case FLOAT:
+					case DOUBLE:
+						d = std::stod(rhs.toString()) / this->_value;
+						break ;
+
+					case UNKNOWN:
+						break ;
+				}
+
+				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
+			}
+
+			return (NULL);
 		}
 
-		std::ostream &				operator<<(std::ostream &out)
+		IOperand const *		operator%(const IOperand &rhs) const
 		{
-			out << this->getValue();
+			int					i = 0;
+			long int			d = 0;
+			eOperandType 		type;
+			const Operand<T> *	op = NULL;
 
-			return (out);
+			if (this->_type == rhs.getPrecision())
+			{
+				op = static_cast<const Operand<T> *>(&rhs);
+
+				if (!this->_value)
+					throw Exception::FloatingPointException();
+
+				return (new Operand<T>(this->_type, static_cast<long int>(op->getValue()) % static_cast<long int>(this->_value)));
+			}
+			else
+			{
+				if (!this->_value)
+					throw Exception::FloatingPointException();
+
+				if (this->_type > rhs.getPrecision())
+					type = this->_type;
+				else
+					type = rhs.getType();
+
+				switch (type)
+				{
+					case INT8:
+					case INT16:
+					case INT32:
+						i = static_cast<long int>(std::stoi(rhs.toString())) % static_cast<long int>(this->_value);
+						break ;
+
+					case FLOAT:
+					case DOUBLE:
+						throw Exception::ModuloOnFloatingPointException();
+
+					case UNKNOWN:
+						break ;
+				}
+
+				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
+			}
+
+			return (NULL);
 		}
 
 private:
 
-		eOperandType	_type;
-		int				_precision;
-		T				_value;
+		const eOperandType			_type;
+		T							_value;
+		//Factory						_factory;
+		Computer					_computer;
+
+		Operand() : _type(Int8), _value(0) {};
 };
 
 #endif

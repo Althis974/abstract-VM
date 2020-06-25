@@ -5,41 +5,33 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
-#include <iostream>
 #include <string>
-#include <list>
-#include "Computer.hpp"
+#include <regex>
 #include "Operand.hpp"
 
-class Lexer
+enum eCommandType
 {
+	PUSH,
+	POP,
+	DUMP,
+	ASSERT,
+	ADD,
+	SUB,
+	MUL,
+	DIV,
+	MOD,
+	PRINT,
+	EXIT,
+	END,
+	COMMENT,
+	ERROR
+};
 
-public:
-
-		// Constructor
-		Lexer() = default;
-
-		// Copy constructor
-		Lexer(const Lexer &src) = default;
-
-		// Destructor
-		~Lexer() = default;
-
-		// Assignation operator overload
-		Lexer & operator=(const Lexer &rhs) = default;
-
-		// Fill instructions list
-		void fill(const std::string &str);
-
-		// Tokenize instructions list
-		std::list<std::string> tokenize(const std::string &line);
-
-		// Execute instructions list
-		void execute();
-
-private:
-
-		std::list<std::string> _instructions;
+namespace Lexer
+{
+	eCommandType	getCommandType(const std::string &s);
+	eOperandType	getOperandType(const std::string &s);
+	std::string		getOperandValue(const std::string &s);
 };
 
 

@@ -7,58 +7,63 @@
 
 #include <iostream>
 #include <string>
-#include <list>
-#include "IOperand.hpp"
-#include "Operand.hpp"
+#include <vector>
+//#include "Operand.hpp"
 #include "Exception.hpp"
-
-typedef std::list<IOperand *> opStack;
+//#include "Lexer.hpp"
+#include "IOperand.hpp"
+//#include "Factory.hpp"
 
 class Computer
 {
+	//PRIVATE ATTRIBUT
+	//const Factory						_factory;
+
+	// _instructions
+	const std::vector<std::string *>	*_command_list;
+
+	//opStack
+	std::vector<const IOperand *>		_operand_table;
+
+
+	//PRIVATE CONSTRUCTOR
+	Computer(const Computer &rhs) = default;
+	Computer &	operator=(const Computer &rhs) = default;
+
+	//Computer FUNCTIONS
+	void 	push(const std::string &str);
+	void 	pop();
+	void 	dump() const;
+	void 	assert(const std::string &str) const;
+	void 	add();
+	void 	sub();
+	void 	mul();
+	void 	div();
+	void 	mod();
+	void 	print() const;
 
 public:
+	Computer();
+	Computer(const std::vector<std::string *> &command_list);
+	~Computer() = default;
 
-		// Constructor
-		Computer();
+	//EXCUTING SCRIPT
+	void 	doMagic();
 
-		// Copy constructor
-		Computer(const Computer &src) = default;
-
-		// Destructor
-		~Computer() = default;
-
-		// Assignation operator overload
-		Computer & 	operator=(const Computer &rhs) = default;
-
-		// Factory method
-		IOperand *	createOperand(eOperandType type, const std::string &value);
-
-		// Getter
-		IOperand *	get();
-
-		// Instructions
-		void 		push(IOperand *rhs);
-		void 		pop();
-		void 		dump();
-		void 		add();
-		void 		sub();
-		void 		mul();
-		void 		div();
-		void 		mod();
+	const IOperand *	createOperand(const eOperandType type, const std::string &value) const;
 
 private:
 
-		typedef IOperand *(Computer::*fPtr)(const std::string &);
+	typedef const IOperand *(Computer::*OperandFunc)(const std::string &) const;
 
-		fPtr 		_fList[5];
-		opStack 	_opStack;
+	// fList
+	std::vector<OperandFunc> _func;
 
-		IOperand *	createInt8(const std::string &value);
-		IOperand *	createInt16(const std::string &value);
-		IOperand *	createInt32(const std::string &value);
-		IOperand *	createFloat(const std::string &value);
-		IOperand *	createDouble(const std::string &value);
+	IOperand const *	createInt8(const std::string &value) const;
+	IOperand const *	createInt16(const std::string &value) const;
+	IOperand const *	createInt32(const std::string &value) const;
+	IOperand const *	createFloat(const std::string &value) const;
+	IOperand const *	createDouble(const std::string &value) const;
 };
 
 

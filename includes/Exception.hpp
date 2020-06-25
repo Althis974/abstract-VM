@@ -8,30 +8,111 @@
 #include <string>
 #include <exception>
 
-class Exception : public std::exception
+namespace Exception
 {
+	class OverflowException: public std::exception
+	{
 
-public:
+	public:
 
-		// Constructors
-		Exception();
-		Exception(const std::string &reason);
+			const char *	what() const throw();
+	};
 
-		// Copy constructor
-		Exception(const Exception &src) = default;
+	class UnderflowException: public std::exception
+	{
 
-		// Destructor
-		virtual ~Exception() throw() = default;
+	public:
 
-		// Assignation operator overload
-		Exception & operator=(const Exception &rhs) = default;
+			const char *	what() const throw();
+	};
 
-		// Returns a pointer to the error description
-		const char *	what() const throw();
+	class SyntaxException: public std::exception
+	{
 
-private:
+	public:
 
-		std::string   	_reason;
+			const char *	what() const throw();
+	};
+
+	class UnknownInstructionException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class PopOnEmptyStackException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class FloatingPointException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class MissingExitInstructionException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class AssertException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class OperationOnEmptyStackException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class ModuloOnFloatingPointException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class PrintNonAsciiException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class PrintOnEmptyStackException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
+
+	class FileDoesNotExistException: public std::exception
+	{
+
+	public:
+
+			const char *	what() const throw();
+	};
 };
 
 

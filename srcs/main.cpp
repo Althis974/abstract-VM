@@ -1,64 +1,26 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "../includes/Lexer.hpp"
-
-int     ft_atoi(const std::string &s)
-{
-	std::stringstream	stringStream;
-	int					nb;
-
-	stringStream << s;
-	stringStream >> nb;
-
-	return (nb);
-}
-
-double  ft_atof(const std::string &s)
-{
-	std::stringstream	stringStream;
-	double				nb;
-
-	stringStream << s;
-	stringStream >> nb;
-
-	return (nb);
-}
+#include "../includes/Parser.hpp"
+#include "../includes/Computer.hpp"
 
 int		main(int ac, char **av)
 {
-	try
-	{
-		Lexer           lexer;
-		std::string     line;
+	try {
+		if (ac == 2) {
+			Computer	calculator(Parser::readFile(av[1]));
 
-		if (ac == 2)
-		{
-			std::ifstream file(av[1], std::ios::in);
-			if (!file)
-				throw Exception("File not found");
-
-			while (getline(file, line))
-				lexer.fill(line);
-
-			file.close();
-			lexer.execute();
+			calculator.doMagic();
 		}
-		else
-		{
-			do
-			{
-				getline(std::cin, line, '\n');
-				lexer.fill(line);
-			} while (line.find(";;") == line.npos);
-			lexer.execute();
-		}
-	}
-	catch (const Exception &e)
-	{
-		std::cerr << "ERROR : " << e.what() << std::endl;
-	}
+		else if (ac == 1) {
+			Computer	cal(Parser::readStdin());
 
-	return (0);
+			cal.doMagic();
+		}
+	} catch (std::exception &e) {
+		std::cout << "Error: ";
+		std::cout << e.what() << std::endl;
+	}
+	return (EXIT_SUCCESS);
 }
 

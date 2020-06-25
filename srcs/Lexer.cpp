@@ -4,95 +4,85 @@
 
 #include "../includes/Lexer.hpp"
 
-// Fill instructions list
-
-void Lexer::fill(const std::string &s)
+//LEXER
+//TODO JE RISQUE D'AVOIR UN PROBLEME ENTRE LES COMMENTAIRES ET LA FIN DES ENTREE (';;')
+eCommandType		Lexer::getCommandType(const std::string &s)
 {
-	if (s[0] != ';')
-		this->_instructions.push_back(s);
+	if (s.substr(0, 5) == "push ")
+		return PUSH;
+	if (s.substr(0, 7) == "assert ")
+		return ASSERT;
+	if (s.substr(0, 1) == ";")
+		return COMMENT;
+	if (s.substr(0, 3) == "pop")
+		return POP;
+	if (s.substr(0, 4) == "dump")
+		return DUMP;
+	if (s.substr(0, 3) == "add")
+		return ADD;
+	if (s.substr(0, 3) == "sub")
+		return SUB;
+	if (s.substr(0, 3) == "mul")
+		return MUL;
+	if (s.substr(0, 3) == "div")
+		return DIV;
+	if (s.substr(0, 3) == "mod")
+		return MOD;
+	if (s.substr(0, 5) == "print")
+		return PRINT;
+	if (s.substr(0, 4) == "exit")
+		return EXIT;
+	if (s.substr(0, 2) == ";;")
+		return END;
+
+	return ERROR;
 }
 
-// Tokenize instructions
-
-std::list<std::string> Lexer::tokenize(const std::string &line)
+eOperandType		Lexer::getOperandType(const std::string &s)
 {
-	std::string tmp;
-	std::list<std::string> tokens;
+	std::string		operand_type;
 
-	for (int i = 0; line.c_str()[i]; ++i)
-	{
-		if (line.c_str()[i] == ' ' || line.c_str()[i] == '(' || line.c_str()[i] == ')')
-		{
-			++i;
-			tokens.push_back(tmp);
-			tmp.clear();
-		}
-		tmp += line.c_str()[i];
-	}
+	operand_type = s.substr(s.find(' ') + 1, s.size());
 
-	return (tokens);
+	if (operand_type.substr(0, 4) == "int8")
+		return INT8;
+	if (operand_type.substr(0, 5) == "int16")
+		return INT16;
+	if (operand_type.substr(0, 5) == "int32")
+		return INT32;
+	if (operand_type.substr(0, 5) == "float")
+		return FLOAT;
+	if (operand_type.substr(0, 6) == "double")
+		return DOUBLE;
+
+	return UNKNOWN;
 }
 
-// Execute instructions list
-
-void Lexer::execute()
+std::string			Lexer::getOperandValue(const std::string &s)
 {
-	Computer computer;
-	std::string tmp;
-	std::string line;
+	const char *	check;
+	std::string		operand_value;
+	std::regex		num;
 
-	//for (std::list<std::string>::iterator it = this->_instructions.begin();
-	//	 it != this->_instructions.end(); ++it)
-	for (auto & _instruction : this->_instructions)
+	operand_value = s.substr(s.find('(') + 1, s.size());
+	num = ("^[0-9.-]*$");
+
+	if (operand_value.find(')') != std::string::npos)
 	{
-		line = _instruction;
-		for (int i = 0; line.c_str()[i]; ++i)
+		check = operand_value.substr(operand_value.find(')') + 1, std::string::npos).c_str();
+		for (int i = 0; check[i]; ++i)
 		{
-			if (line.c_str()[i] == ')')
-			{
-				std::list<std::string> tokens = tokenize(line);
-				if (tokens.front() == "push")
-				{
-					tokens.pop_front();
-					int x = 0;
-					while (operands[x++].name != tokens.front()){}
-					tokens.pop_front();
-					IOperand *op = computer.createOperand(operands[x - 1].type, tokens.front());
-					tokens.pop_front();
-					computer.push(op);
-
-				}
-				else if (tokens.front() == "assert")
-				{
-					tokens.pop_front();
-					IOperand *op = computer.get();
-					if (ft_atoi(tokens.front()) == op->getType())
-					{
-						tokens.pop_front();
-						if (tokens.front() != op->toString())
-							throw Exception("assert instruction not verify. 1");
-						tokens.pop_front();
-					}
-					else
-						throw Exception("assert instruction not verify. 2");
-				}
-			}
+			if (check[i] == ';')
+				break ;
+			if (check[i] != ' ')
+				throw Exception::SyntaxException();
 		}
-		if (line == "add")
-			computer.add();
-		else if (line == "sub")
-			computer.sub();
-		else if (line == "mul")
-			computer.mul();
-		else if (line == "div")
-			computer.div();
-		else if (line == "mod")
-			computer.mod();
-		else if (line == "pop")
-			computer.pop();
-		else if (line == "dump")
-			computer.dump();
 	}
-	if (line != "exit")
-		throw Exception("No exit instruction found.");
+
+	operand_value = operand_value.substr(0, operand_value.find(')'));
+
+	if (!std::regex_match(operand_value, num))
+		throw Exception::SyntaxException();
+
+	return (operand_value);
 }
