@@ -299,7 +299,7 @@ private:
 		//Factory						_factory;
 		Computer					_computer;
 
-		Operand() : _type(Int8), _value(0) {};
+		Operand() : _type(INT8), _value(0) {};
 };
 
 #endif
