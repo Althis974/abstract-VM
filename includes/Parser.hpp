@@ -5,6 +5,8 @@
 #ifndef ABSTRACT_VM_PARSER_HPP
 #define ABSTRACT_VM_PARSER_HPP
 
+#include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -12,10 +14,10 @@
 #include "Exception.hpp"
 
 // For Win only
-#include "unistd.h"
+// #include "unistd.h"
 
 // For rest
-//#include <unistd.h>
+#include <unistd.h>
 
 # define BUFF_SIZE 256
 
