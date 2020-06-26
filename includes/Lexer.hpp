@@ -9,7 +9,7 @@
 #include <regex>
 #include "Operand.hpp"
 
-enum eCommandType
+enum eInstructionType
 {
 	PUSH,
 	POP,
@@ -22,16 +22,16 @@ enum eCommandType
 	MOD,
 	PRINT,
 	EXIT,
-	END,
 	COMMENT,
+	END,
 	ERROR
 };
 
 namespace Lexer
 {
-	eCommandType	getCommandType(const std::string &s);
-	eOperandType	getOperandType(const std::string &s);
-	std::string		getOperandValue(const std::string &s);
+	eInstructionType	getInstructionType(const std::string &s);
+	eOperandType		getOperandType(const std::string &s);
+	std::string			getOperandValue(const std::string &s);
 };
 
 
