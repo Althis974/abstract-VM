@@ -16,9 +16,6 @@
 // For Win only
 #include "unistd.h"
 
-// For rest
-//#include <unistd.h>
-
 # define BUFF_SIZE 256
 
 namespace Parser
