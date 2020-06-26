@@ -167,6 +167,9 @@ void				Computer::add()
 	b = *(this->_operands.rbegin());
 	this->_operands.pop_back();
 	this->_operands.push_back(*a + *b);
+
+	delete a;
+	delete b;
 }
 
 void				Computer::sub()
