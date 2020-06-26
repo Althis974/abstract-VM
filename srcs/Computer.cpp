@@ -33,10 +33,7 @@ Computer::~Computer()
 	for (auto & _operand : this->_operands)
 		delete _operand;
 	this->_operands.clear();
-	//vec
-	if (!this->_operands.empty())
-		std::cout << "yo" << std::endl;
-
+	this->_operands.shrink_to_fit();
 }
 
 // Execute instructions
