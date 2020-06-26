@@ -185,6 +185,9 @@ void				Computer::sub()
 	b = *(this->_operands.rbegin());
 	this->_operands.pop_back();
 	this->_operands.push_back(*a - *b);
+
+	delete a;
+	delete b;
 }
 
  void				Computer::mul()
@@ -200,6 +203,9 @@ void				Computer::sub()
 	b = *(this->_operands.rbegin());
 	this->_operands.pop_back();
 	this->_operands.push_back(*a * *b);
+
+	 delete a;
+	 delete b;
 }
 
 void				Computer::div()
@@ -215,6 +221,9 @@ void				Computer::div()
 	b = *(this->_operands.rbegin());
 	this->_operands.pop_back();
 	this->_operands.push_back(*a / *b);
+
+	delete a;
+	delete b;
 }
 
 void 				Computer::mod()
@@ -230,6 +239,9 @@ void 				Computer::mod()
 	b = *(this->_operands.rbegin());
 	this->_operands.pop_back();
 	this->_operands.push_back(*a % *b);
+
+	delete a;
+	delete b;
 }
 
 void 				Computer::print() const
