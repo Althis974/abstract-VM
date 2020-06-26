@@ -42,7 +42,7 @@ std::vector<std::string *> const &	Parser::readStdin()
 	std::vector<std::string *> *	instructions;
 
 	exit = false;
-	line = nullptr;
+	line = new char [BUFF_SIZE];
 	instructions = new std::vector<std::string *>;
 
 	while (strncmp(line, ";;", 2) != 0)
@@ -55,7 +55,7 @@ std::vector<std::string *> const &	Parser::readStdin()
 		if (!strncmp(line, "exit", 4))
 			exit = true;
 	}
-	delete [] (line);
+	delete line;
 
 	if (!exit)
 		throw Exception::MissingExitInstructionException();
