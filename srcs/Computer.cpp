@@ -29,9 +29,9 @@ Computer::Computer(const std::vector<std::string *> &instructions) : _instructio
 
 Computer::~Computer()
 {
-		delete this->_instructions;
-		for (auto & _operand : this->_operands)
-				delete _operand;
+	delete this->_instructions;
+	for (auto & _operand : this->_operands)
+		delete _operand;
 }
 
 // Execute instructions
@@ -206,8 +206,8 @@ void				Computer::sub()
 	this->_operands.pop_back();
 	this->_operands.push_back(*a * *b);
 
-	 delete a;
-	 delete b;
+	delete a;
+	delete b;
 }
 
 void				Computer::div()
