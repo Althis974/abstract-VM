@@ -296,7 +296,6 @@ private:
 
 		const eOperandType			_type;
 		T							_value;
-		//Factory						_factory;
 		Computer					_computer;
 
 		Operand() : _type(INT8), _value(0) {};
