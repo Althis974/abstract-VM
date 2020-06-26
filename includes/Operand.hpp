@@ -53,7 +53,7 @@ public:
 		// Explicit
 		std::string const & 	toString() const
 		{
-
+			std::string 		*s = new std::string();
 			std::ostringstream	oStringStream;
 
 			if (this->_type == INT8)
@@ -61,7 +61,8 @@ public:
 			else
 				oStringStream << this->_value;
 
-			return (*new std::string(oStringStream.str()));
+			s->append(oStringStream.str());
+			return (*s);
 		};
 
 		// Arithmetic operators overload

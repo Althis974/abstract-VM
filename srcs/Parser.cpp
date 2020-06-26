@@ -55,7 +55,7 @@ std::vector<std::string *> const &	Parser::readStdin()
 		if (!strncmp(line, "exit", 4))
 			exit = true;
 	}
-	delete line;
+	delete [] line;
 
 	if (!exit)
 		throw Exception::MissingExitInstructionException();
