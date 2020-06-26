@@ -154,6 +154,8 @@ void				Computer::dump() const
 
 	if (value != operand.toString())
 		throw Exception::AssertException();
+
+	delete &operand.toString();
 }
 
 void				Computer::add()
