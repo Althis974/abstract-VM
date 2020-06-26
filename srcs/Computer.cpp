@@ -33,7 +33,7 @@ Computer::~Computer()
 	for (auto & _operand : this->_operands)
 		delete _operand;
 	this->_operands.clear();
-	this->_operands.shrink_to_fit();
+	std::vector<const IOperand *>().swap(this->_operands);
 }
 
 // Execute instructions
