@@ -32,6 +32,11 @@ Computer::~Computer()
 	delete this->_instructions;
 	for (auto & _operand : this->_operands)
 		delete _operand;
+	this->_operands.clear();
+	//vec
+	if (!this->_operands.empty())
+		std::cout << "yo" << std::endl;
+
 }
 
 // Execute instructions
@@ -154,8 +159,6 @@ void				Computer::dump() const
 
 	if (value != operand.toString())
 		throw Exception::AssertException();
-
-	delete &operand.toString();
 }
 
 void				Computer::add()
