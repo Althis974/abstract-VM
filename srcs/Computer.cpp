@@ -32,10 +32,6 @@ Computer::~Computer()
 	delete this->_instructions;
 	for (auto & _operand : this->_operands)
 		delete _operand;
-	this->_functions.clear();
-	std::vector<OperandFunc>().swap(this->_functions);
-	this->_operands.clear();
-	std::vector<const IOperand *>().swap(this->_operands);
 }
 
 // Execute instructions
