@@ -8,62 +8,65 @@
 #include <iostream>
 #include <string>
 #include <vector>
-//#include "Operand.hpp"
 #include "Exception.hpp"
-//#include "Lexer.hpp"
 #include "IOperand.hpp"
-//#include "Factory.hpp"
 
 class Computer
 {
-	//PRIVATE ATTRIBUT
-	//const Factory						_factory;
-
-	// _instructions
-	const std::vector<std::string *>	*_command_list;
-
-	//opStack
-	std::vector<const IOperand *>		_operand_table;
-
-
-	//PRIVATE CONSTRUCTOR
-	Computer(const Computer &rhs) = default;
-	Computer &	operator=(const Computer &rhs) = default;
-
-	//Computer FUNCTIONS
-	void 	push(const std::string &str);
-	void 	pop();
-	void 	dump() const;
-	void 	assert(const std::string &str) const;
-	void 	add();
-	void 	sub();
-	void 	mul();
-	void 	div();
-	void 	mod();
-	void 	print() const;
 
 public:
-	Computer();
-	Computer(const std::vector<std::string *> &command_list);
-	~Computer() = default;
 
-	//EXCUTING SCRIPT
-	void 	doMagic();
+		// Constructors
+		Computer();
+		Computer(const std::vector<std::string *> &instructions);
 
-	const IOperand *	createOperand(const eOperandType type, const std::string &value) const;
+		// Copy constructor
+		Computer(const Computer &rhs) = default;
+
+		// Destructor
+		~Computer();
+
+		// Assignation operator overload
+		Computer &							operator=(const Computer &rhs) = default;
+
+		// Execute instructions
+		void 								execute();
+
+		// Factory method
+		const IOperand *					createOperand(const eOperandType type, const std::string &value) const;
 
 private:
 
-	typedef const IOperand *(Computer::*OperandFunc)(const std::string &) const;
+		// Pointers on member functions
+		typedef const IOperand *(Computer::*OperandFunc)(const std::string &) const;
 
-	// fList
-	std::vector<OperandFunc> _func;
+		// Functions list
+		std::vector<OperandFunc>			_functions;
 
-	IOperand const *	createInt8(const std::string &value) const;
-	IOperand const *	createInt16(const std::string &value) const;
-	IOperand const *	createInt32(const std::string &value) const;
-	IOperand const *	createFloat(const std::string &value) const;
-	IOperand const *	createDouble(const std::string &value) const;
+		// Instructions list
+		const std::vector<std::string *> *	_instructions;
+
+		// Operands list
+		std::vector<const IOperand *>		_operands;
+
+		// Instructions
+		void 	push(const std::string &s);
+		void 	pop();
+		void 	dump() const;
+		void 	assert(const std::string &s) const;
+		void 	add();
+		void 	sub();
+		void 	mul();
+		void 	div();
+		void 	mod();
+		void 	print() const;
+
+		// Factory functions
+		IOperand const *					createInt8(const std::string &value) const;
+		IOperand const *					createInt16(const std::string &value) const;
+		IOperand const *					createInt32(const std::string &value) const;
+		IOperand const *					createFloat(const std::string &value) const;
+		IOperand const *					createDouble(const std::string &value) const;
 };
 
 

@@ -5,212 +5,266 @@
 #include "../includes/Computer.hpp"
 #include "../includes/Lexer.hpp"
 
-Computer::Computer() : _command_list(nullptr)
+// Constructors
+
+Computer::Computer() : _instructions(nullptr)
 {
-	this->_func.push_back(&Computer::createInt8);
-	this->_func.push_back(&Computer::createInt16);
-	this->_func.push_back(&Computer::createInt32);
-	this->_func.push_back(&Computer::createFloat);
-	this->_func.push_back(&Computer::createDouble);
+	this->_functions.push_back(&Computer::createInt8);
+	this->_functions.push_back(&Computer::createInt16);
+	this->_functions.push_back(&Computer::createInt32);
+	this->_functions.push_back(&Computer::createFloat);
+	this->_functions.push_back(&Computer::createDouble);
 }
 
-//TODO GET STD::VECTOR
-
-Computer::Computer(const std::vector<std::string *> &command_list) : _command_list(&command_list)
+Computer::Computer(const std::vector<std::string *> &instructions) : _instructions(&instructions)
 {
-	this->_func.push_back(&Computer::createInt8);
-	this->_func.push_back(&Computer::createInt16);
-	this->_func.push_back(&Computer::createInt32);
-	this->_func.push_back(&Computer::createFloat);
-	this->_func.push_back(&Computer::createDouble);
+	this->_functions.push_back(&Computer::createInt8);
+	this->_functions.push_back(&Computer::createInt16);
+	this->_functions.push_back(&Computer::createInt32);
+	this->_functions.push_back(&Computer::createFloat);
+	this->_functions.push_back(&Computer::createDouble);
 }
 
-void		Computer::doMagic()
-{
-	std::vector<std::string *>::const_iterator		it;
-	std::vector<std::string *>::const_iterator		ite;
+// Destructor
 
-	it = _command_list->begin();
-	ite = _command_list->end();
-	while (it != ite) {
+Computer::~Computer()
+{
+		delete this->_instructions;
+}
+
+// Execute instructions
+
+void				Computer::execute()
+{
+	std::vector<std::string *>::const_iterator	it;
+	std::vector<std::string *>::const_iterator	ite;
+
+	it = this->_instructions->begin();
+	ite = this->_instructions->end();
+	while (it != ite)
+	{
 		//TODO REPLACE SWITCH BY FUNCTION VECTOR (LIKE FACTORY)
-		switch (Lexer::getCommandType(**it)) {
-			case ERROR:
-				throw Exception::UnknownInstructionException();
-			case DUMP:
-				this->dump();
-				break ;
+		switch (Lexer::getInstructionType(**it))
+		{
 			case PUSH:
 				this->push(**it);
 				break ;
+
 			case POP:
 				this->pop();
 				break ;
+
+			case DUMP:
+				this->dump();
+				break ;
+
 			case ASSERT:
 				this->assert(**it);
 				break ;
+
 			case ADD:
 				this->add();
 				break ;
+
 			case SUB:
 				this->sub();
 				break ;
+
 			case MUL:
 				this->mul();
 				break ;
+
 			case DIV:
 				this->div();
 				break ;
+
 			case MOD:
 				this->mod();
 				break ;
+
 			case PRINT:
 				this->print();
 				break ;
+
+			case ERROR:
+				throw Exception::UnknownInstructionException();
+
 			default:
 				break ;
 		}
-		it++;
+		++it;
 	}
 }
 
-void 								Computer::push(const std::string &str) {
-	eOperandType 					operand_type = Lexer::getOperandType(str);
-	std::string						value = Lexer::getOperandValue(str);
+// Instructions
 
-	switch (operand_type) {
+void 				Computer::push(const std::string &s)
+{
+	std::string		value;
+	eOperandType 	operand_type;
+
+	value = Lexer::getOperandValue(s);
+	operand_type = Lexer::getOperandType(s);
+
+	switch (operand_type)
+	{
 		case UNKNOWN:
 			throw Exception::SyntaxException();
+
 		default:
-			_operand_table.push_back(createOperand(operand_type, value));
+			this->_operands.push_back(createOperand(operand_type, value));
 			break ;
 	}
 }
 
-void								Computer::pop() {
-	if (_operand_table.empty())
+void				Computer::pop()
+{
+
+	if (this->_operands.empty())
 		throw Exception::PopOnEmptyStackException();
-	_operand_table.pop_back();
+
+	this->_operands.pop_back();
 }
 
-void								Computer::dump() const {
+void				Computer::dump() const
+{
 	std::vector<const IOperand *>::const_reverse_iterator	it;
 	std::vector<const IOperand *>::const_reverse_iterator	ite;
 
-	it = _operand_table.rbegin();
-	ite = _operand_table.rend();
-	while (it != ite) {
+	it = this->_operands.rbegin();
+	ite = this->_operands.rend();
+	while (it != ite)
+	{
 		std::cout << (*it)->toString() << std::endl;
-		it++;
+		++it;
 	}
 }
 
- void								Computer::assert(const std::string &str) const {
-	if (!_operand_table.size())
+ void				Computer::assert(const std::string &s) const
+ {
+	std::string		value;
+
+	if (this->_operands.empty())
 		throw Exception::AssertException();
 
-	std::string						value = Lexer::getOperandValue(str);
-	const IOperand					&operand = **(_operand_table.rbegin());
+	value = Lexer::getOperandValue(s);
+	const IOperand	&operand = **(this->_operands.rbegin());
 
 	if (value != operand.toString())
 		throw Exception::AssertException();
 }
 
-void								Computer::add() {
-	const IOperand					*o1 = NULL;
-	const IOperand					*o2 = NULL;
+void				Computer::add()
+{
+	const IOperand *	a;
+	const IOperand *	b;
 
-	if (_operand_table.size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
-	o1 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	o2 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	_operand_table.push_back(*o1 + *o2);
+
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a + *b);
 }
 
-void								Computer::sub() {
-	const IOperand					*o1 = NULL;
-	const IOperand					*o2 = NULL;
+void				Computer::sub()
+{
+	const IOperand *	a;
+	const IOperand *	b;
 
-	if (_operand_table.size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
-	o1 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	o2 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	_operand_table.push_back(*o1 - *o2);
+
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a - *b);
 }
 
- void								Computer::mul()
+ void				Computer::mul()
  {
-	const IOperand					*o1 = nullptr;
-	const IOperand					*o2 = nullptr;
+	const IOperand *	a;
+	const IOperand *	b;
 
-	if (_operand_table.size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
-	o1 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	o2 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	_operand_table.push_back(*o1 * *o2);
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a * *b);
 }
 
-void								Computer::div() {
-	const IOperand					*o1 = NULL;
-	const IOperand					*o2 = NULL;
+void				Computer::div()
+{
+	const IOperand *	a;
+	const IOperand *	b;
 
-	if (_operand_table.size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
-	o1 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	o2 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	_operand_table.push_back(*o1 / *o2);
+
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a / *b);
 }
 
-void 								Computer::mod() {
-	const IOperand					*o1 = NULL;
-	const IOperand					*o2 = NULL;
+void 				Computer::mod()
+{
+	const IOperand *	a;
+	const IOperand *	b;
 
-	if (_operand_table.size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
-	o1 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	o2 = *(_operand_table.rbegin());
-	_operand_table.pop_back();
-	_operand_table.push_back(*o1 % *o2);
+
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a % *b);
 }
 
-void 								Computer::print() const {
-	const IOperand					*ioperand = NULL;
-	const Operand<char>				*operand = NULL;
+void 				Computer::print() const
+{
+	const IOperand *		iOperand;
+	const Operand<char> *	operand;
 
-	if (_operand_table.empty())
+	if (this->_operands.empty())
 		throw Exception::PrintOnEmptyStackException();
-	ioperand = *(_operand_table.rbegin());
-	if (ioperand->getType() != INT8)
+
+	iOperand = *(this->_operands.rbegin());
+
+	if (iOperand->getType() != INT8)
 		throw Exception::PrintNonAsciiException();
-	operand = static_cast<const Operand<char> *>(ioperand);
+
+	operand = dynamic_cast<const Operand<char> *>(iOperand);
 	std::cout << operand->getValue() << std::endl;
 }
 
+// Factory method
 
-// Factory methods
-
-const IOperand *			Computer::createOperand(const eOperandType type, std::string const &value) const
+const IOperand *	Computer::createOperand(const eOperandType type, std::string const &value) const
 {
-	return ((this->*(this->_func[type]))(value));
+	return ((this->*(this->_functions[type]))(value));
 }
 
-const IOperand *			Computer::createInt8(const std::string &value) const
-{
-	int						number = static_cast<char>(atoi(value.c_str()));
-	std::ostringstream		ss;
+// Factory functions
 
-	ss << number;
-	if (value.substr(0, value.find('.')).compare(ss.str().substr(0, ss.str().find('.'))) != 0)
+const IOperand *	Computer::createInt8(const std::string &value) const
+{
+	int						nb;
+	std::ostringstream		oStringStream;
+
+	nb = static_cast<char>(atoi(value.c_str()));
+	oStringStream << nb;
+
+	if (value.substr(0, value.find('.'))
+		!= oStringStream.str().substr(0, oStringStream.str().find('.')))
 	{
 		if (value.find('-') != std::string::npos)
 			throw Exception::UnderflowException();
@@ -218,16 +272,19 @@ const IOperand *			Computer::createInt8(const std::string &value) const
 		throw Exception::OverflowException();
 	}
 
-	return (new Operand<char>(INT8, static_cast<char>(number)));
+	return (new Operand<char>(INT8, static_cast<char>(nb)));
 }
 
-const IOperand *			Computer::createInt16(const std::string &value) const
+const IOperand *	Computer::createInt16(const std::string &value) const
 {
-	int 					number = static_cast<short>(atoi(value.c_str()));
-	std::ostringstream		ss;
+	int 					nb;
+	std::ostringstream		oStringStream;
 
-	ss << number;
-	if (value.substr(0, value.find('.')).compare(ss.str().substr(0, ss.str().find('.'))) != 0)
+	nb = static_cast<short>(atoi(value.c_str()));
+	oStringStream << nb;
+
+	if (value.substr(0, value.find('.'))
+		!= oStringStream.str().substr(0, oStringStream.str().find('.')))
 	{
 		if (value.find('-') != std::string::npos)
 			throw Exception::UnderflowException();
@@ -235,16 +292,19 @@ const IOperand *			Computer::createInt16(const std::string &value) const
 		throw Exception::OverflowException();
 	}
 
-	return (new Operand<short>(INT16, static_cast<short>(number)));
+	return (new Operand<short>(INT16, static_cast<short>(nb)));
 }
 
-const IOperand *			Computer::createInt32(const std::string &value) const
+const IOperand *	Computer::createInt32(const std::string &value) const
 {
-	int 					number = atoi(value.c_str());
-	std::ostringstream		ss;
+	int 					nb;
+	std::ostringstream		oStringStream;
 
-	ss << number;
-	if (value.substr(0, value.find('.')).compare(ss.str().substr(0, ss.str().find('.'))) != 0)
+	nb = atoi(value.c_str());
+	oStringStream << nb;
+
+	if (value.substr(0, value.find('.'))
+		!= oStringStream.str().substr(0, oStringStream.str().find('.')))
 	{
 		if (value.find('-') != std::string::npos)
 			throw Exception::UnderflowException();
@@ -252,16 +312,19 @@ const IOperand *			Computer::createInt32(const std::string &value) const
 		throw Exception::OverflowException();
 	}
 
-	return (new Operand<int>(INT32, number));
+	return (new Operand<int>(INT32, nb));
 }
 
-const IOperand *			Computer::createFloat(const std::string &value) const
+const IOperand *	Computer::createFloat(const std::string &value) const
 {
-	double 					number = static_cast<float>(atof(value.c_str()));
-	std::ostringstream		ss;
+	double 					nb;
+	std::ostringstream		oStringStream;
 
-	ss << number;
-	if (value.substr(0, value.find('.')).compare(ss.str().substr(0, ss.str().find('.'))) != 0)
+	nb = static_cast<float>(atof(value.c_str()));
+	oStringStream << nb;
+
+	if (value.substr(0, value.find('.'))
+		!= oStringStream.str().substr(0, oStringStream.str().find('.')))
 	{
 		if (value.find('-') != std::string::npos)
 			throw Exception::UnderflowException();
@@ -269,16 +332,19 @@ const IOperand *			Computer::createFloat(const std::string &value) const
 		throw Exception::OverflowException();
 	}
 
-	return (new Operand<float>(FLOAT, static_cast<float>(number)));
+	return (new Operand<float>(FLOAT, static_cast<float>(nb)));
 }
 
-const IOperand *			Computer::createDouble(const std::string &value) const
+const IOperand *	Computer::createDouble(const std::string &value) const
 {
-	double 					number = atof(value.c_str());
-	std::ostringstream		ss;
+	double 					nb;
+	std::ostringstream		oStringStream;
 
-	ss << number;
-	if (value.substr(0, value.find('.')).compare(ss.str().substr(0, ss.str().find('.'))) != 0)
+	nb = atof(value.c_str());
+	oStringStream << nb;
+
+	if (value.substr(0, value.find('.'))
+		!= oStringStream.str().substr(0, oStringStream.str().find('.')))
 	{
 		if (value.find('-') != std::string::npos)
 			throw Exception::UnderflowException();
@@ -286,5 +352,5 @@ const IOperand *			Computer::createDouble(const std::string &value) const
 		throw Exception::OverflowException();
 	}
 
-	return (new Operand<double>(DOUBLE, number));
+	return (new Operand<double>(DOUBLE, nb));
 }
