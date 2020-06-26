@@ -22,14 +22,25 @@ public:
 		Operand(const eOperandType type, const T value) : _type(type),
 				_value(value)
 		{
+			this->_representation = new std::string();
+			std::ostringstream	oStringStream;
 
+			if (this->_type == INT8)
+				oStringStream << static_cast<int>(this->_value);
+			else
+				oStringStream << this->_value;
+
+			this->_representation->append(oStringStream.str());
 		};
 
 		// Copy constructor
 		Operand(const Operand &src) = default;
 
 		// Destructor
-		virtual ~Operand() = default;
+		virtual ~Operand()
+		{
+			delete this->_representation;
+		};
 
 		// Assignation operator overload
 		Operand & operator=(const Operand &rhs) = default;
@@ -52,7 +63,7 @@ public:
 
 		// Explicit
 		std::string const & 	toString() const
-		{
+		{/*
 			std::ostringstream	oStringStream;
 
 			if (this->_type == INT8)
@@ -60,7 +71,10 @@ public:
 			else
 				oStringStream << this->_value;
 
-			return (*new std::string(oStringStream.str()));
+			this->_representation->append(oStringStream.str());
+			return (*this->_representation);
+			//return (*new std::string(oStringStream.str()));*/
+			return (*this->_representation);
 		};
 
 		// Arithmetic operators overload
@@ -295,9 +309,10 @@ private:
 
 		const eOperandType			_type;
 		T							_value;
+		std::string * 				_representation;
 		Computer					_computer;
 
-		Operand() : _type(INT8), _value(0) {};
+		Operand() : _type(INT8), _value(0){};
 };
 
 #endif
