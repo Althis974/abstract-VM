@@ -1,26 +1,29 @@
-#include <string>
 #include <iostream>
-#include <fstream>
 #include "../includes/Parser.hpp"
 #include "../includes/Computer.hpp"
 
 int		main(int ac, char **av)
 {
-	try {
-		if (ac == 2) {
-			Computer	calculator(Parser::readFile(av[1]));
+	try
+	{
+		if (ac == 2)
+		{
+			Computer	comp1(Parser::readFile(av[1]));
 
-			calculator.doMagic();
+			comp1.execute();
 		}
-		else if (ac == 1) {
-			Computer	cal(Parser::readStdin());
+		else if (ac == 1)
+		{
+			Computer	comp2(Parser::readStdin());
 
-			cal.doMagic();
+			comp2.execute();
 		}
-	} catch (std::exception &e) {
-		std::cout << "Error: ";
+	}
+	catch (std::exception &e)
+	{
 		std::cout << e.what() << std::endl;
 	}
-	return (EXIT_SUCCESS);
+
+	return (0);
 }
 
