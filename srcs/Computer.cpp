@@ -4,6 +4,7 @@
 
 #include "../includes/Computer.hpp"
 #include "../includes/Lexer.hpp"
+#include "../includes/Parser.hpp"
 
 // Constructors
 
@@ -29,6 +30,7 @@ Computer::Computer(const std::vector<std::string *> &instructions) : _instructio
 
 Computer::~Computer()
 {
+	//Parser::clean();
 	delete this->_instructions;
 	for (auto & _operand : this->_operands)
 		delete _operand;

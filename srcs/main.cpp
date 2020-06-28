@@ -8,13 +8,15 @@ int		main(int ac, char **av)
 	{
 		if (ac == 2)
 		{
-			Computer	comp1(Parser::readFile(av[1]));
+			Parser		parse1;
+			Computer	comp1(parse1.readFile(av[1]));
 
 			comp1.execute();
 		}
 		else if (ac == 1)
 		{
-			Computer	comp2(Parser::readStdin());
+			Parser		parse2;
+			Computer	comp2(parse2.readStdin());
 
 			comp2.execute();
 		}

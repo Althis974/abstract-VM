@@ -22,15 +22,7 @@ public:
 		Operand(const eOperandType type, const T value) : _type(type),
 				_value(value)
 		{
-			this->_representation = new std::string();
-			std::ostringstream	oStringStream;
-
-			if (this->_type == INT8)
-				oStringStream << static_cast<int>(this->_value);
-			else
-				oStringStream << this->_value;
-
-			this->_representation->append(oStringStream.str());
+			setRepresentation();
 		};
 
 		// Copy constructor
@@ -45,25 +37,10 @@ public:
 		// Assignation operator overload
 		Operand & operator=(const Operand &rhs) = default;
 
-		// Getters
-		eOperandType getType() const
+		// Setters
+		void 					setRepresentation()
 		{
-			return (this->_type);
-		};
-
-		int getPrecision() const
-		{
-			return (this->_type);
-		};
-
-		T getValue() const
-		{
-			return (this->_value);
-		};
-
-		// Explicit
-		std::string const & 	toString() const
-		{/*
+			this->_representation = new std::string();
 			std::ostringstream	oStringStream;
 
 			if (this->_type == INT8)
@@ -72,8 +49,27 @@ public:
 				oStringStream << this->_value;
 
 			this->_representation->append(oStringStream.str());
-			return (*this->_representation);
-			//return (*new std::string(oStringStream.str()));*/
+		}
+
+		// Getters
+		eOperandType			getType() const
+		{
+			return (this->_type);
+		};
+
+		int						getPrecision() const
+		{
+			return (this->_type);
+		};
+
+		T						getValue() const
+		{
+			return (this->_value);
+		};
+
+		// Explicit
+		std::string const & 	toString() const
+		{
 			return (*this->_representation);
 		};
 
@@ -83,7 +79,7 @@ public:
 			int					i = 0;
 			double 				d = 0;
 			eOperandType 		type;
-			const Operand<T> *	op = NULL;
+			const Operand<T> *	op = nullptr;
 
 			if (this->_type == rhs.getPrecision())
 			{
@@ -118,7 +114,7 @@ public:
 			return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (NULL);
+			return (nullptr);
 		}
 
 		IOperand const * 		operator-(const IOperand &rhs) const
@@ -126,7 +122,7 @@ public:
 			int					i = 0;
 			double 				d = 0;
 			eOperandType 		type;
-			const Operand<T> *	op = NULL;
+			const Operand<T> *	op = nullptr;
 
 			if (this->_type == rhs.getPrecision())
 			{
@@ -162,7 +158,7 @@ public:
 				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (NULL);
+			return (nullptr);
 		}
 
 		IOperand const *		operator*(const IOperand &rhs) const
@@ -170,7 +166,7 @@ public:
 			int					i = 0;
 			double 				d = 0;
 			eOperandType 		type;
-			const Operand<T> *	op = NULL;
+			const Operand<T> *	op = nullptr;
 
 			if (this->_type == rhs.getPrecision())
 			{
@@ -205,7 +201,7 @@ public:
 				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (NULL);
+			return (nullptr);
 		}
 
 		IOperand const *		operator/(const IOperand &rhs) const
@@ -213,7 +209,7 @@ public:
 			int					i = 0;
 			double 				d = 0;
 			eOperandType 		type;
-			const Operand<T> *	op = NULL;
+			const Operand<T> *	op = nullptr;
 
 			if (this->_type == rhs.getPrecision())
 			{
@@ -254,7 +250,7 @@ public:
 				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (NULL);
+			return (nullptr);
 		}
 
 		IOperand const *		operator%(const IOperand &rhs) const
@@ -262,7 +258,7 @@ public:
 			int					i = 0;
 			long int			d = 0;
 			eOperandType 		type;
-			const Operand<T> *	op = NULL;
+			const Operand<T> *	op = nullptr;
 
 			if (this->_type == rhs.getPrecision())
 			{
@@ -302,7 +298,7 @@ public:
 				return (this->_computer.createOperand(type, std::to_string((i) ? i : d)));
 			}
 
-			return (NULL);
+			return (nullptr);
 		}
 
 private:

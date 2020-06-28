@@ -2,8 +2,8 @@
 // Created by Romeo on 24/06/2020.
 //
 
-#ifndef ABSTRACT_VM_PARSER_HPP
-#define ABSTRACT_VM_PARSER_HPP
+#ifndef PARSER_HPP
+#define PARSER_HPP
 
 #include <stdio.h>
 #include <string.h>
@@ -17,11 +17,30 @@
 #include "unistd.h"
 
 # define BUFF_SIZE 256
-
+/*
 namespace Parser
 {
 	std::vector<std::string *> const &	readFile(const char *filename);
 	std::vector<std::string *> const &	readStdin();
+	//void 								clean();
+
+	//std::string * tmp;
+};*/
+
+class Parser
+{
+
+public:
+
+		Parser();
+		~Parser();
+
+		std::vector<std::string *> const & readFile(const char *filename);
+		std::vector<std::string *> const & readStdin();
+
+private:
+
+		std::vector<std::string *> *	_instructions;
 };
 
 #endif

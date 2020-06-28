@@ -6,6 +6,7 @@
 
 eInstructionType	Lexer::getInstructionType(const std::string &s)
 {
+	//std::cout << "s= " << s.c_str() << std::endl;
 	if (s.substr(0, 5) == "push ")
 		return PUSH;
 	else if (s.substr(0, 3) == "pop")
