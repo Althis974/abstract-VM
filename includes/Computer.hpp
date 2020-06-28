@@ -50,16 +50,16 @@ private:
 		std::vector<const IOperand *>		_operands;
 
 		// Instructions
-		void 	push(const std::string &s);
-		void 	pop();
-		void 	dump() const;
-		void 	assert(const std::string &s) const;
-		void 	add();
-		void 	sub();
-		void 	mul();
-		void 	div();
-		void 	mod();
-		void 	print() const;
+		void 								push(const std::string &s);
+		void 								pop();
+		void 								dump() const;
+		void 								assert(const std::string &s) const;
+		void 								add();
+		void 								sub();
+		void 								mul();
+		void 								div();
+		void 								mod();
+		void 								print() const;
 
 		// Factory functions
 		IOperand const *					createInt8(const std::string &value) const;

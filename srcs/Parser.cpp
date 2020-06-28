@@ -4,18 +4,6 @@
 
 #include "../includes/Parser.hpp"
 
-/*
-void 								Parser::clean()
-{
-	std::cout << "clean" << std::endl;
-	delete [] Parser::tmp;
-}*/
-
-Parser::Parser()
-{
-
-}
-
 Parser::~Parser()
 {
 	auto it = this->_instructions->begin();
@@ -32,8 +20,6 @@ std::vector<std::string *> const &	Parser::readFile(const char *filename)
 {
 	std::ifstream 					file;
 	char *							line;
-	//std::vector<std::string *> *	instructions;
-
 
 	if (access(filename, F_OK) == -1)
 		throw Exception::FileDoesNotExistException();
@@ -45,11 +31,7 @@ std::vector<std::string *> const &	Parser::readFile(const char *filename)
 	while (file.getline(line, BUFF_SIZE))
 	{
 		if (strlen(line))
-		{
-			//Parser::tmp = new std::string(line);
-			//instructions->push_back(Parser::tmp);
 			this->_instructions->push_back(new std::string(line));
-		}
 
 		if (!strncmp(line, "exit", 4))
 			break ;
@@ -57,7 +39,6 @@ std::vector<std::string *> const &	Parser::readFile(const char *filename)
 	file.close();
 	delete [] (line);
 
-	//std::cout << "begin= " << **(instructions->rbegin()) << std::endl;
 	if (!this->_instructions->empty() && **(this->_instructions->rbegin()) != "exit")
 		throw Exception::MissingExitInstructionException();
 
@@ -68,7 +49,6 @@ std::vector<std::string *> const &	Parser::readStdin()
 {
 	bool 							exit;
 	char *							line;
-	//std::vector<std::string *> *	instructions;
 
 	exit = false;
 	line = new char [BUFF_SIZE];

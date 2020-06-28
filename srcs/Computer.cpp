@@ -4,7 +4,6 @@
 
 #include "../includes/Computer.hpp"
 #include "../includes/Lexer.hpp"
-#include "../includes/Parser.hpp"
 
 // Constructors
 
@@ -30,8 +29,6 @@ Computer::Computer(const std::vector<std::string *> &instructions) : _instructio
 
 Computer::~Computer()
 {
-	//Parser::clean();
-	//delete this->_instructions;
 	for (auto & _operand : this->_operands)
 		delete _operand;
 }
@@ -47,7 +44,6 @@ void				Computer::execute()
 	ite = this->_instructions->end();
 	while (it != ite)
 	{
-		//TODO REPLACE SWITCH BY FUNCTION VECTOR (LIKE FACTORY)
 		switch (Lexer::getInstructionType(**it))
 		{
 			case PUSH:
@@ -123,7 +119,6 @@ void 				Computer::push(const std::string &s)
 
 void				Computer::pop()
 {
-
 	if (this->_operands.empty())
 		throw Exception::PopOnEmptyStackException();
 

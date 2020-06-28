@@ -17,30 +17,31 @@
 #include "unistd.h"
 
 # define BUFF_SIZE 256
-/*
-namespace Parser
-{
-	std::vector<std::string *> const &	readFile(const char *filename);
-	std::vector<std::string *> const &	readStdin();
-	//void 								clean();
-
-	//std::string * tmp;
-};*/
 
 class Parser
 {
 
 public:
 
-		Parser();
+		// Constructor
+		Parser() = default;
+
+		// Copy constructor
+		Parser(const Parser &rhs) = default;
+
+		// Destructor
 		~Parser();
 
-		std::vector<std::string *> const & readFile(const char *filename);
-		std::vector<std::string *> const & readStdin();
+		// Assignation operator overload
+		Parser &							operator=(const Parser &rhs) = default;
+
+		// Parsing
+		std::vector<std::string *> const & 	readFile(const char *filename);
+		std::vector<std::string *> const & 	readStdin();
 
 private:
 
-		std::vector<std::string *> *	_instructions;
+		std::vector<std::string *> *		_instructions;
 };
 
 #endif

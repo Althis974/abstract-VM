@@ -19,6 +19,7 @@ class Operand : public IOperand
 public:
 
 		// Constructors
+		Operand() = default;
 		Operand(const eOperandType type, const T value) : _type(type),
 				_value(value)
 		{
@@ -307,8 +308,6 @@ private:
 		T							_value;
 		std::string * 				_representation;
 		Computer					_computer;
-
-		Operand() : _type(INT8), _value(0){};
 };
 
 #endif
