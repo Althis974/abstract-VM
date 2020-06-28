@@ -10,7 +10,6 @@
 
 Computer::Computer() : _instructions(nullptr)
 {
-	this->_operands = new std::vector<const IOperand *>();
 	this->_functions.push_back(&Computer::createInt8);
 	this->_functions.push_back(&Computer::createInt16);
 	this->_functions.push_back(&Computer::createInt32);
@@ -20,7 +19,6 @@ Computer::Computer() : _instructions(nullptr)
 
 Computer::Computer(const std::vector<std::string *> &instructions) : _instructions(&instructions)
 {
-	this->_operands = new std::vector<const IOperand *>();
 	this->_functions.push_back(&Computer::createInt8);
 	this->_functions.push_back(&Computer::createInt16);
 	this->_functions.push_back(&Computer::createInt32);
@@ -34,16 +32,8 @@ Computer::~Computer()
 {
 	//Parser::clean();
 	//delete this->_instructions;
-	//for (auto & _operand : this->_operands)
-	//	delete _operand;
-	auto it = this->_operands->begin();
-	while (this->_operands->end() != it)
-	{
-		delete *it;
-		++it;
-	}
-	delete this->_operands;
-	this->_operands = nullptr;
+	for (auto & _operand : this->_operands)
+		delete _operand;
 }
 
 // Execute instructions
@@ -126,7 +116,7 @@ void 				Computer::push(const std::string &s)
 			throw Exception::SyntaxException();
 
 		default:
-			this->_operands->push_back(createOperand(operand_type, value));
+			this->_operands.push_back(createOperand(operand_type, value));
 			break ;
 	}
 }
@@ -134,10 +124,10 @@ void 				Computer::push(const std::string &s)
 void				Computer::pop()
 {
 
-	if (this->_operands->empty())
+	if (this->_operands.empty())
 		throw Exception::PopOnEmptyStackException();
 
-	this->_operands->pop_back();
+	this->_operands.pop_back();
 }
 
 void				Computer::dump() const
@@ -145,8 +135,8 @@ void				Computer::dump() const
 	std::vector<const IOperand *>::const_reverse_iterator	it;
 	std::vector<const IOperand *>::const_reverse_iterator	ite;
 
-	it = this->_operands->rbegin();
-	ite = this->_operands->rend();
+	it = this->_operands.rbegin();
+	ite = this->_operands.rend();
 	while (it != ite)
 	{
 		std::cout << (*it)->toString() << std::endl;
@@ -158,11 +148,11 @@ void				Computer::dump() const
  {
 	std::string		value;
 
-	if (this->_operands->empty())
+	if (this->_operands.empty())
 		throw Exception::AssertException();
 
 	value = Lexer::getOperandValue(s);
-	const IOperand	&operand = **(this->_operands->rbegin());
+	const IOperand	&operand = **(this->_operands.rbegin());
 
 	if (value != operand.toString())
 		throw Exception::AssertException();
@@ -173,14 +163,14 @@ void				Computer::add()
 	const IOperand *	a;
 	const IOperand *	b;
 
-	if (this->_operands->size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
-	a = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	b = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	this->_operands->push_back(*a + *b);
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a + *b);
 
 	delete a;
 	delete b;
@@ -191,14 +181,14 @@ void				Computer::sub()
 	const IOperand *	a;
 	const IOperand *	b;
 
-	if (this->_operands->size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
-	a = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	b = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	this->_operands->push_back(*a - *b);
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a - *b);
 
 	delete a;
 	delete b;
@@ -209,14 +199,14 @@ void				Computer::sub()
 	const IOperand *	a;
 	const IOperand *	b;
 
-	if (this->_operands->size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
-	a = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	b = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	this->_operands->push_back(*a * *b);
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a * *b);
 
 	delete a;
 	delete b;
@@ -227,14 +217,14 @@ void				Computer::div()
 	const IOperand *	a;
 	const IOperand *	b;
 
-	if (this->_operands->size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
-	a = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	b = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	this->_operands->push_back(*a / *b);
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a / *b);
 
 	delete a;
 	delete b;
@@ -245,14 +235,14 @@ void 				Computer::mod()
 	const IOperand *	a;
 	const IOperand *	b;
 
-	if (this->_operands->size() < 2)
+	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
-	a = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	b = *(this->_operands->rbegin());
-	this->_operands->pop_back();
-	this->_operands->push_back(*a % *b);
+	a = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	b = *(this->_operands.rbegin());
+	this->_operands.pop_back();
+	this->_operands.push_back(*a % *b);
 
 	delete a;
 	delete b;
@@ -263,10 +253,10 @@ void 				Computer::print() const
 	const IOperand *		iOperand;
 	const Operand<char> *	operand;
 
-	if (this->_operands->empty())
+	if (this->_operands.empty())
 		throw Exception::PrintOnEmptyStackException();
 
-	iOperand = *(this->_operands->rbegin());
+	iOperand = *(this->_operands.rbegin());
 
 	if (iOperand->getType() != INT8)
 		throw Exception::PrintNonAsciiException();

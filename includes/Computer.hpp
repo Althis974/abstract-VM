@@ -47,7 +47,7 @@ private:
 		const std::vector<std::string *> *	_instructions;
 
 		// Operands list
-		std::vector<const IOperand *> *		_operands;
+		std::vector<const IOperand *>		_operands;
 
 		// Instructions
 		void 	push(const std::string &s);
