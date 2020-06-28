@@ -127,6 +127,7 @@ void				Computer::pop()
 	if (this->_operands.empty())
 		throw Exception::PopOnEmptyStackException();
 
+	delete this->_operands.back();
 	this->_operands.pop_back();
 }
 
