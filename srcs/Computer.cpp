@@ -31,7 +31,7 @@ Computer::Computer(const std::vector<std::string *> &instructions) : _instructio
 Computer::~Computer()
 {
 	//Parser::clean();
-	delete this->_instructions;
+	//delete this->_instructions;
 	for (auto & _operand : this->_operands)
 		delete _operand;
 }
