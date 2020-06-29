@@ -222,10 +222,10 @@ public:
 
 			if (this->_type == rhs.getPrecision())
 			{
-				op = static_cast<const Operand<T> *>(&rhs);
-
 				if (!this->_value)
 					throw Exception::FloatingPointException();
+				
+				op = static_cast<const Operand<T> *>(&rhs);
 
 				return (new Operand<T>(this->_type, op->getValue() / this->_value));
 			}
@@ -271,10 +271,10 @@ public:
 
 			if (this->_type == rhs.getPrecision())
 			{
-				op = static_cast<const Operand<T> *>(&rhs);
-
 				if (!this->_value)
 					throw Exception::FloatingPointException();
+
+				op = static_cast<const Operand<T> *>(&rhs);
 
 				return (new Operand<T>(this->_type, static_cast<long int>(op->getValue()) % static_cast<long int>(this->_value)));
 			}

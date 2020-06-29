@@ -220,36 +220,48 @@ void				Computer::div()
 {
 	const IOperand *	a;
 	const IOperand *	b;
+	const IOperand *	res;
 
 	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
+	res = nullptr;
 	a = *(this->_operands.rbegin());
-	this->_operands.pop_back();
 	b = *(this->_operands.rbegin());
-	this->_operands.pop_back();
-	this->_operands.push_back(*a / *b);
+	res = *a / *b;
 
-	delete a;
-	delete b;
+	if (res)
+	{
+		this->_operands.pop_back();
+		this->_operands.pop_back();
+		this->_operands.push_back(res);
+		delete a;
+		delete b;
+	}
 }
 
 void 				Computer::mod()
 {
 	const IOperand *	a;
 	const IOperand *	b;
+	const IOperand *	res;
 
 	if (this->_operands.size() < 2)
 		throw Exception::OperationOnEmptyStackException();
 
+	res = nullptr;
 	a = *(this->_operands.rbegin());
-	this->_operands.pop_back();
 	b = *(this->_operands.rbegin());
-	this->_operands.pop_back();
-	this->_operands.push_back(*a % *b);
+	res = *a % *b;
 
-	delete a;
-	delete b;
+	if (res)
+	{
+		this->_operands.pop_back();
+		this->_operands.pop_back();
+		this->_operands.push_back(res);
+		delete a;
+		delete b;
+	}
 }
 
 void 				Computer::print() const
