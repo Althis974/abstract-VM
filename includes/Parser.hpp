@@ -20,8 +20,6 @@
 #include <vector>
 #include <string>
 #include "Exception.hpp"
-
-// For Win only
 #include "unistd.h"
 
 # define BUFF_SIZE 256
