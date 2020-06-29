@@ -42,5 +42,4 @@ namespace Lexer
 	std::string			getOperandValue(const std::string &s);
 };
 
-
 #endif

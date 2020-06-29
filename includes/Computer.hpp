@@ -77,5 +77,4 @@ private:
 		IOperand const *					createDouble(const std::string &value) const;
 };
 
-
 #endif

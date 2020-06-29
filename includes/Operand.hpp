@@ -44,7 +44,7 @@ public:
 		};
 
 		// Assignation operator overload
-		Operand & operator=(const Operand &rhs) = default;
+		Operand & 				operator=(const Operand &rhs) = default;
 
 		// Setters
 		void 					setRepresentation()
@@ -312,10 +312,10 @@ public:
 
 private:
 
-		const eOperandType			_type;
-		T							_value;
-		std::string * 				_representation;
-		Computer					_computer;
+		const eOperandType		_type;
+		T						_value;
+		std::string * 			_representation;
+		Computer				_computer;
 };
 
 #endif
