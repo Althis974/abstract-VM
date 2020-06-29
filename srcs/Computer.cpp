@@ -227,7 +227,7 @@ void				Computer::div()
 
 	res = nullptr;
 	a = *(this->_operands.rbegin());
-	b = *(this->_operands.rbegin());
+	b = *(++this->_operands.rbegin());
 	res = *a / *b;
 
 	if (res)
@@ -251,9 +251,9 @@ void 				Computer::mod()
 
 	res = nullptr;
 	a = *(this->_operands.rbegin());
-	b = *(this->_operands.rbegin());
+	b = *(++this->_operands.rbegin());
 	res = *a % *b;
-
+		
 	if (res)
 	{
 		this->_operands.pop_back();
