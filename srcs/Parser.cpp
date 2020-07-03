@@ -29,11 +29,12 @@ std::vector<std::string *> const &	Parser::readFile(const char *filename)
 	std::ifstream 					file;
 	char *							line;
 
+	this->_instructions = new std::vector<std::string *>;
+
 	if (access(filename, F_OK) == -1)
 		throw Exception::FileDoesNotExistException();
 
-	line = new char [BUFF_SIZE];
-	this->_instructions = new std::vector<std::string *>;
+	line = new char [BUFF_SIZE]
 
 	file.open(filename);
 	while (file.getline(line, BUFF_SIZE))
